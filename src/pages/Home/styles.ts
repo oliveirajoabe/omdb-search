@@ -83,3 +83,18 @@ export const WrapperNotFoundMovie = styled.div`
     }
   }
 `;
+
+export const WrapperPagination = styled.div`
+  display: flex;
+  justify-content: center;
+
+  margin-top: 5rem;
+  @media (max-width: 425px) {
+    ul {
+      li {
+        width: 30px;
+        font-size: 1rem;
+      }
+    }
+  }
+`;

@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { useFilms } from "../../commons/hooks/useFilms";
 import Loader from "../../components/Loader";
 import FileNotFound from "../../assets/icons/FileNotFound";
+import { useEffect, useState } from "react";
+import Pagination from "../../components/Pagination";
 
 export default function Home() {
   const {
@@ -17,10 +19,17 @@ export default function Home() {
     isLoading,
     setValueInput,
     valueInput,
-    handleChange,
+    handleChangeInput,
+    handleChangePage,
   } = useFilms();
 
-  const debounceChange = useDebounce(handleChange, 800);
+  const [pageCount, setPageCount] = useState(0);
+
+  useEffect(() => {
+    setPageCount(Math.ceil(parseInt(data?.totalResults || "0") / 10));
+  }, [handleChangeInput]);
+
+  const debounceChange = useDebounce(handleChangeInput, 800);
 
   const EmpityContent = () => (
     <S.Content>
@@ -31,13 +40,15 @@ export default function Home() {
   );
 
   const WrapperCards = () => (
-    <S.WrapperCards id="scrollableDiv">
-      {data?.Search.map((item) => (
-        <Link to={`/film/${item.imdbID}`} key={item.imdbID}>
-          <Cards img={item.Poster} title={item.Title} subtitle={item.Year} />
-        </Link>
-      ))}
-    </S.WrapperCards>
+    <>
+      <S.WrapperCards id="scrollableDiv">
+        {data?.Search.map((item) => (
+          <Link to={`/film/${item.imdbID}`} key={item.imdbID}>
+            <Cards img={item.Poster} title={item.Title} subtitle={item.Year} />
+          </Link>
+        ))}
+      </S.WrapperCards>
+    </>
   );
 
   const FileNotFoundInImdb = () => (
@@ -65,7 +76,17 @@ export default function Home() {
           </S.InputContent>
         </S.Header>
         {isInputEmpty && <EmpityContent />}
-        {data?.Response === "True" && <WrapperCards />}
+        {data?.Response === "True" && (
+          <>
+            <WrapperCards />
+            <S.WrapperPagination>
+              <Pagination
+                handleChangePage={(e) => handleChangePage(e)}
+                pageCount={pageCount}
+              />
+            </S.WrapperPagination>
+          </>
+        )}
         {isLoading && <Loader />}
         {data?.Response === "False" && <FileNotFoundInImdb />}
       </S.WrapperContentHome>

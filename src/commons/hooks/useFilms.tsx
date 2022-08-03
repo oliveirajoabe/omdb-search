@@ -28,9 +28,9 @@ export function FilmsContextProvider({ children }: FilmsContextProviderProps) {
   const [valueInput, setValueInput] = useState<string>("");
   const [data, setData] = useState<DataProps>();
 
-  function fetchMoreData(input: string) {
+  function fetchMoreData(input: string, page?: number | undefined) {
     api
-      .get(`?s=${input}&page=${1}`)
+      .get(`?s=${input}&page=${page ? page + 1 : 1}`)
       .then(({ data }) => {
         setData(data);
         setIsLoading(false);
@@ -38,7 +38,7 @@ export function FilmsContextProvider({ children }: FilmsContextProviderProps) {
       .catch((error) => console.log(error));
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     if (value) {
@@ -52,6 +52,10 @@ export function FilmsContextProvider({ children }: FilmsContextProviderProps) {
     }
   };
 
+  const handleChangePage = (page: number) => {
+    fetchMoreData(valueInput, page);
+  };
+
   return (
     <FilmsContext.Provider
       value={{
@@ -60,7 +64,8 @@ export function FilmsContextProvider({ children }: FilmsContextProviderProps) {
         isLoading,
         setValueInput,
         valueInput,
-        handleChange,
+        handleChangeInput,
+        handleChangePage,
       }}
     >
       {children}

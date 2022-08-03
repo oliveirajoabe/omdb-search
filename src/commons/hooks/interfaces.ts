@@ -18,5 +18,6 @@ export interface FilmsContextData {
   isLoading: boolean;
   setValueInput: Function;
   valueInput: string;
-  handleChange: Function;
+  handleChangeInput: Function;
+  handleChangePage: Function;
 }
